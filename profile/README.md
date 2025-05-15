@@ -4,5 +4,9 @@ reaOS has two main components:
 - **reaOS**: A custom AOSP for remote access and control.
 - **reaOSTF**: WEB-UI for control reaOS and other android-based devices.
 
+## Instructions
+[Building the AOSP](BUILD.md)
+
+
 
 Project was based on [redroid](https://github.com/remote-android) and [STF](https://github.com/DeviceFarmer).
