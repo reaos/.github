@@ -1,31 +1,33 @@
-> WARNING: YOU NEED AT LEAST 200GB OF FREE SPACE ON YOUR DISK
+> **WARNING:** YOU NEED AT LEAST 200GB OF FREE SPACE ON YOUR DISK
 
-# Build reaOS with Docker
+> **For macOS users:**
+> * Create a case-sensitive partition for AOSP sourcecode.
+> * If macOS itself starts crashing:
+>    * Choose gRPC FUSE in Docker settings. It's slower but more stable.
+> * In case of "Too many open files" error:
+>    * Increase the system’s maximum open-files limit.
+
+# Building reaOS in Docker
 
 ## 1. Prepare the environment
-- Install Docker
-- Install git-lfs
-- Install repo
+* Install Docker
+* Install git-lfs
+* Install repo
 
 ## 2. Fetch the AOSP source code
-- Create a directory for the AOSP source code (optional)
+- Create a directory for the AOSP source code (example)
 ```bash
 mkdir -p "$HOME/reaosp"
 cd "$HOME/reaosp"
 ```
-
-- Set workdir to the current directory
-```bash
-REAOS_DIR="$PWD"
-```
-
+- **WARNING:** Now you should be in directory where AOSP source code will be placed.
 - Clone the AOSP source code
 ```bash
-repo init -u https://android.googlesource.com/platform/manifest --git-lfs --depth=1 -b android-15.0.0_r36
+repo init -u https://android.googlesource.com/platform/manifest --git-lfs --depth=1 -b android-15.0.0_r23
 git clone https://github.com/reaos/local_manifests .repo/local_manifests -b reaos-15
 ```
 
-- Optional: Enable GAPPS
+- **Optional:** Enable GAPPS
 ```bash
 cp .repo/local_manifests/gapps.xml{.example,}
 ```
@@ -35,21 +37,35 @@ cp .repo/local_manifests/gapps.xml{.example,}
 repo sync -j8
 ```
 
-## 3. Prepare building environment
+## 3. Create signing keys
+- Run the script to create signing keys
+```bash
+(cd ./vendor/lineage-priv/keys && ./keys.sh)
+```
+
+## 4. Prepare building environment
 - Create image
 ```bash
-docker buildx create --use
 docker buildx build --build-arg userid=$(id -u) --build-arg groupid=$(id -g) --build-arg username=rea -t rea-builder --load .repo/local_manifests/
 ```
 
-- Run the image
+- Run and enter the image
 ```bash
-docker run -it --privileged --rm --hostname rea-builder --name rea-builder -v $REAOS_DIR:/src -w /src rea-builder
+docker run -it --privileged --rm --hostname rea-builder -v .:/src rea-builder
 ```
 
-## 4. Build the AOSP source code
-- Enter the Docker container
+## 5. Build the AOSP source code
+- Load the environment
 ```bash
-docker exec -it rea-builder bash
+. build/envsetup.sh
 ```
 
+- Choose the target
+```bash
+lunch reaos_arm64_only-ap3a-user
+```
+
+- Build the AOSP source code
+```bash
+m -j$(nproc)
+```
