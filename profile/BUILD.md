@@ -3,7 +3,7 @@
 > **For macOS users:**
 > * Create a case-sensitive partition for AOSP sourcecode.
 > * If macOS itself starts crashing:
->    * Choose gRPC FUSE in Docker settings. It's slower but more stable.
+>    * Choose Docker VMM or gRPC FUSE in Docker settings. It's slower but more stable.
 > * In case of "Too many open files" error:
 >    * Increase the system’s maximum open-files limit.
 
