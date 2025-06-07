@@ -1,11 +1,17 @@
 > **WARNING:** YOU NEED AT LEAST 200GB OF FREE SPACE ON YOUR DISK
 
 > **For macOS users:**
-> * Create a case-sensitive partition for AOSP sourcecode.
-> * If macOS itself starts crashing:
->    * Choose Docker VMM or gRPC FUSE in Docker settings. It's slower but more stable.
-> * In case of "Too many open files" error:
->    * Increase the system’s maximum open-files limit.
+> * Create a case-sensitive partition for the AOSP source code.
+> * VMM selection:
+>   * Docker VMM:
+>     * Build segfaults and freezes.
+>   * Apple Virtualization Framework:
+>     * VirtioFS:
+>       * "Too many open files" error.
+>       * macOS itself becomes unstable and crashes.
+>     * gRPC FUSE:
+>       * Works, but very slow.
+>     * Alternatively, you can use docker's volume mount.
 
 # Building reaOS in Docker
 
@@ -62,7 +68,7 @@ docker run -it --privileged --rm --hostname rea-builder -v .:/src rea-builder
 
 - Choose the target
 ```bash
-lunch reaos_arm64_only-ap3a-user
+lunch2 reaos bp1a user
 ```
 
 - Build the AOSP source code
