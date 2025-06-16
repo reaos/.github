@@ -75,3 +75,21 @@ lunch2 reaos bp1a user
 ```bash
 m -j$(nproc)
 ```
+
+## 6. Import to docker
+- Mount images
+```bash
+(cd out_rea/target/product/reaos \
+  && sudo mount system{.img,} -o ro \
+  && sudo mount vendor{.img,} -o ro)
+```
+
+- Import to docker
+```bash
+(cd out_rea/target/product/reaos && sudo tar --xattrs -c vendor -C system --exclude="./vendor" . | docker import --platform=linux/arm64 -c 'ENTRYPOINT ["/init", "qemu=1", "androidboot.hardware=reaos", "ro.setupwizard.mode=DISABLED"]' - reaos)
+```
+
+- Unmount images
+```bash
+(cd out_rea/target/product/reaos && sudo umount system vendor)
+```
